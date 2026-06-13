@@ -1,5 +1,6 @@
 import os
 import requests
+from bs4 import BeautifulSoup
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
@@ -7,14 +8,20 @@ CHAT_ID = os.environ["CHAT_ID"]
 url = "https://bloxfruitscode.com/blox-fruits-stock-live-right-now/"
 response = requests.get(url)
 
-text = response.text
+soup = BeautifulSoup(response.text, "html.parser")
 
-pos = text.find("Normal Stock")
+fruits = []
 
-if pos != -1:
-    message = text[pos:pos+2500]
-else:
-    message = "Normal Stock не найден"
+for fruit in soup.find_all("strong", class_="bfs-card-title"):
+    fruits.append(fruit.text.strip())
+
+# Удаляем повторы
+fruits = list(dict.fromkeys(fruits))
+
+message = "🍎 Blox Fruits Stock\n\n"
+
+for fruit in fruits:
+    message += f"• {fruit}\n"
 
 requests.post(
     f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
