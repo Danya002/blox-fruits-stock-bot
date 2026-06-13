@@ -18,7 +18,7 @@ for fruit in soup.find_all("strong", class_="bfs-card-title"):
 # Удаляем повторы
 fruits = list(dict.fromkeys(fruits))
 
-message = "🍎 Blox Fruits Stock\n\n"
+message = response.text[response.text.find("Mirage Stock"):response.text.find("FAQ")]
 
 for fruit in fruits:
     message += f"• {fruit}\n"
